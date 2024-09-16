@@ -6,11 +6,11 @@ use std::{
 
 use renet::{ConnectionConfig, DefaultChannel, RenetClient, RenetServer, ServerEvent};
 use renet_steam::{AccessPermission, SteamClientTransport, SteamServerConfig, SteamServerTransport};
-use steamworks::{Client, ClientManager, LobbyId, LobbyType, SingleClient, SteamId};
+use steamworks::{Client, ClientManager, LobbyId, LobbyType, SteamId};
 
 fn main() {
     env_logger::init();
-    let (steam_client, single) = Client::init_app(480).unwrap();
+    let steam_client = Client::init_app(480).unwrap();
     steam_client.networking_utils().init_relay_network_access();
 
     println!("Usage:");

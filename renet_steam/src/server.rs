@@ -67,7 +67,7 @@ impl<T: Manager + 'static> SteamServerTransport<T> {
     /// Disconnects a client from the server.
     pub fn disconnect_client(&mut self, client_id: ClientId, server: &mut RenetServer, flush_last_packets: bool) {
         if let Some((_key, value)) = self.connections.remove_entry(&client_id) {
-            let _ = value.close(NetConnectionEnd::AppGeneric, Some("Client was kicked"), flush_last_packets);
+            let _ = value.close(NetConnectionEnd::MiscGeneric, Some("Client was kicked"), flush_last_packets);
         }
         server.remove_connection(client_id);
     }
@@ -77,7 +77,7 @@ impl<T: Manager + 'static> SteamServerTransport<T> {
         let keys = self.connections.keys().cloned().collect::<Vec<ClientId>>();
         for client_id in keys {
             let _ = self.connections.remove_entry(&client_id).unwrap().1.close(
-                NetConnectionEnd::AppGeneric,
+                NetConnectionEnd::MiscGeneric,
                 Some("Client was kicked"),
                 flush_last_packets,
             );
@@ -105,12 +105,12 @@ impl<T: Manager + 'static> SteamServerTransport<T> {
                 }
                 ListenSocketEvent::Connecting(event) => {
                     if server.connected_clients() >= self.max_clients {
-                        event.reject(NetConnectionEnd::AppGeneric, Some("Too many clients"));
+                        event.reject(NetConnectionEnd::MiscGeneric, Some("Too many clients"));
                         continue;
                     }
 
                     let Some(steam_id) = event.remote().steam_id() else {
-                        event.reject(NetConnectionEnd::AppGeneric, Some("Invalid steam id"));
+                        event.reject(NetConnectionEnd::MiscGeneric, Some("Invalid steam id"));
                         continue;
                     };
 
@@ -133,7 +133,7 @@ impl<T: Manager + 'static> SteamServerTransport<T> {
                             log::error!("Failed to accept connection from {steam_id:?}: {e}");
                         }
                     } else {
-                        event.reject(NetConnectionEnd::AppGeneric, Some("Not allowed"));
+                        event.reject(NetConnectionEnd::MiscGeneric, Some("Not allowed"));
                     }
                 }
             }

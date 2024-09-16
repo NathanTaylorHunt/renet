@@ -92,11 +92,11 @@ impl SteamClientTransport {
         }
 
         let disconnect_state = ConnectionState::Disconnected {
-            end_reason: NetConnectionEnd::AppGeneric,
+            end_reason: NetConnectionEnd::MiscGeneric,
         };
         let old_state = std::mem::replace(&mut self.state, disconnect_state);
         if let ConnectionState::Connected { connection } = old_state {
-            connection.close(NetConnectionEnd::AppGeneric, Some("Client disconnected"), false);
+            connection.close(NetConnectionEnd::MiscGeneric, Some("Client disconnected"), false);
         }
     }
 
@@ -111,7 +111,7 @@ impl SteamClientTransport {
                     .get_connection_info(connection)
                     .map(|info| info.end_reason())
                     .unwrap_or_default()
-                    .unwrap_or(NetConnectionEnd::AppGeneric);
+                    .unwrap_or(NetConnectionEnd::MiscGeneric);
 
                 self.state = ConnectionState::Disconnected { end_reason };
             }
